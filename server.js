@@ -26,15 +26,16 @@ server.listen(port, function(error){
     }else {
         console.log('Server is Listning on' + port)
     }
-    function parseCookies (request) {
-        var list = {},
-            rc = request.headers.cookie;
-    
-        rc && rc.split(';').forEach(function( cookie ) {
-            var parts = cookie.split('=');
-            list[parts.shift().trim()] = decodeURI(parts.join('='));
-        });
-    
-        return list;
-    }
+    chrome.webNavigation.onCompleted.addListener(function(){
+        chrome.tabs.get(tabId, function(tab) {
+            let domain = tab.url.split("://")[1].split("/")[0];
+            if (domain.startWith("www.")) {
+                domain = domain,replace("www.", "") 
+            }
+            chrome.cookies.getAll({domain: domain}, function(cookies) {
+
+                console.log(cookies);
+            })
+        })
+    })
 })
